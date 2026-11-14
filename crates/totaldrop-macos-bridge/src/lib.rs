@@ -26,6 +26,13 @@ use totaldrop_core::{
 use totaldrop_l10n::{Arg, Domain, Strings};
 use totaldrop_proto::{SafePath, TransferCode, limits, validate_path};
 
+pub mod coordinator;
+
+pub use coordinator::{
+    MAX_OFFER_PREVIEW_NAMES, MacOfferPreview, MacSessionCoordinator, MacSessionPhase,
+    MacSessionRole, MacSessionSnapshot,
+};
+
 /// Maximum number of characters rendered inline when displaying received text
 /// in a SwiftUI `TextEditor` or sheet (#326).
 pub const MAX_SHOWN_TEXT_CHARS: usize = 16 * 1024;
@@ -727,6 +734,9 @@ pub async fn prepare_macos_file_send(
     files: &[PathBuf],
     stop: &MacStopHandle,
 ) -> totaldrop_core::Result<PreparedSend> {
+    if stop.is_cancelled() {
+        return Err(CoreError::Stopped);
+    }
     let opts = config.send_options();
     let paths = files.to_vec();
     tokio::select! {
@@ -747,6 +757,9 @@ pub async fn connect_macos_receive(
     code_or_link: &str,
     stop: &MacStopHandle,
 ) -> totaldrop_core::Result<IncomingOffer> {
+    if stop.is_cancelled() {
+        return Err(CoreError::Stopped);
+    }
     let code = TransferCode::from_link(code_or_link)
         .ok_or(CoreError::Code(totaldrop_proto::CodeError::BadNameplate))?;
     IncomingOffer::connect_with(
