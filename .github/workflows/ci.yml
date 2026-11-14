@@ -63,11 +63,13 @@ jobs:
         run: |
           swift build --package-path ui-swiftui-macos --configuration release
           swift test --package-path ui-swiftui-macos
-      - name: Validate macOS packaging shell scripts
+      - name: Validate macOS packaging shell scripts, 35-locale xcstrings & 6 subplatform units
         run: |
           for script in target-*/*.sh; do
             bash -n "$script"
           done
+          python3 -c 'import json; xc=json.load(open("ui-swiftui-macos/Resources/Localizable.xcstrings")); assert len(xc["strings"]["verificationTitle"]["localizations"]) == 35'
+          python3 tools/verify-subplatforms.py
 
   deny:
     name: Dependencies (cargo-deny)
