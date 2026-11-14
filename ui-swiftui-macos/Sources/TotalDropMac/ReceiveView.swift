@@ -49,7 +49,7 @@ public struct ReceiveView: View {
             allowedContentTypes: [.image],
             allowsMultipleSelection: false
         ) { result in
-            if case .success(let urls), let imageURL = urls.first {
+            if case .success(let urls) = result, let imageURL = urls.first {
                 readQRCode(from: imageURL)
             }
         }
