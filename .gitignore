@@ -1,0 +1,21 @@
+/target
+/.build
+/**/.build
+/**/.swiftpm
+/DerivedData
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.swp
+.DS_Store
+
+# Built macOS bundles and disk images
+dist/
+*.app/
+*.appex/
+*.dmg
+*.pkg
+*.dSYM/
+
+# Python bytecode
+__pycache__/
+*.pyc

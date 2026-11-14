@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "TEAMID.app.totaldrop.mac",
+          "TEAMID.app.totaldrop.ios"
+        ],
+        "components": [
+          {
+            "/": "/r",
+            "comment": "Direct receive link https://totaldrop.app/r#<code> where the transfer code stays in the client-only URL fragment"
+          },
+          {
+            "/": "/r/*",
+            "comment": "Path-prefixed receive link fallback"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAMID.app.totaldrop.mac"
+    ]
+  }
+}
