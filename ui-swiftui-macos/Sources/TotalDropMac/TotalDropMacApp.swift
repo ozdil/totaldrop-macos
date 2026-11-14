@@ -108,7 +108,7 @@ public final class MacAppModel {
     }
 
     /// Extracts a normalized transfer code from Universal Links or custom `totaldrop://` URLs.
-    public static func extractTransferCode(from url: URL) -> String? {
+    nonisolated public static func extractTransferCode(from url: URL) -> String? {
         let raw = url.absoluteString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard raw.utf8.count <= 1024 else { return nil }
 
