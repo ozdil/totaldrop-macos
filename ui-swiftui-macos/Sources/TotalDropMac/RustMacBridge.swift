@@ -344,74 +344,120 @@ private struct RawSessionEventEnvelope: Decodable {
     func toEvent() -> RustSessionEvent? {
         switch event {
         case "code_ready":
-            return .codeReady(
-                displayCode: displayCode ?? "",
-                canonicalCode: canonicalCode ?? "",
-                universalLink: universalLink ?? "",
-                schemeLink: schemeLink ?? "",
-                shareMessage: shareMessage ?? "",
-                entries: entries ?? 0,
-                totalBytes: totalBytes ?? 0,
-                formattedTotal: formattedTotal ?? "",
-                skipped: skipped ?? 0,
-                isText: isText ?? false
+            let vDisplayCode: String = displayCode ?? ""
+            let vCanonicalCode: String = canonicalCode ?? ""
+            let vUniversalLink: String = universalLink ?? ""
+            let vSchemeLink: String = schemeLink ?? ""
+            let vShareMessage: String = shareMessage ?? ""
+            let vEntries: Int = entries ?? 0
+            let vTotalBytes: UInt64 = totalBytes ?? 0
+            let vFormattedTotal: String = formattedTotal ?? ""
+            let vSkipped: Int = skipped ?? 0
+            let vIsText: Bool = isText ?? false
+            return RustSessionEvent.codeReady(
+                displayCode: vDisplayCode,
+                canonicalCode: vCanonicalCode,
+                universalLink: vUniversalLink,
+                schemeLink: vSchemeLink,
+                shareMessage: vShareMessage,
+                entries: vEntries,
+                totalBytes: vTotalBytes,
+                formattedTotal: vFormattedTotal,
+                skipped: vSkipped,
+                isText: vIsText
             )
         case "waiting":
-            return .waiting(headline: headline ?? "")
+            let vHeadline: String = headline ?? ""
+            return RustSessionEvent.waiting(headline: vHeadline)
         case "connected":
-            return .connected(
-                verificationWords: verificationWords ?? [],
-                joinedWordsLtr: joinedWordsLtr ?? ""
+            let vWords: [String] = verificationWords ?? []
+            let vJoined: String = joinedWordsLtr ?? ""
+            return RustSessionEvent.connected(
+                verificationWords: vWords,
+                joinedWordsLtr: vJoined
             )
         case "offer_ready":
-            return .offerReady(
-                files: files ?? 0,
-                dirs: dirs ?? 0,
-                totalBytes: totalBytes ?? 0,
-                formattedSize: formattedSize ?? "",
-                isText: isText ?? false,
-                headline: headline ?? "",
-                summaryLine: summaryLine ?? "",
-                topLevelNames: topLevelNames ?? [],
-                remainingNames: remainingNames ?? 0,
+            let vFiles: Int = files ?? 0
+            let vDirs: Int = dirs ?? 0
+            let vTotalBytes: UInt64 = totalBytes ?? 0
+            let vFormattedSize: String = formattedSize ?? ""
+            let vIsText: Bool = isText ?? false
+            let vHeadline: String = headline ?? ""
+            let vSummaryLine: String = summaryLine ?? ""
+            let vTopLevelNames: [String] = topLevelNames ?? []
+            let vRemainingNames: Int = remainingNames ?? 0
+            let vHasHiddenControls: Bool = hasHiddenControls ?? false
+            let vWords: [String] = verificationWords ?? []
+            let vJoined: String = joinedWordsLtr ?? ""
+            return RustSessionEvent.offerReady(
+                files: vFiles,
+                dirs: vDirs,
+                totalBytes: vTotalBytes,
+                formattedSize: vFormattedSize,
+                isText: vIsText,
+                headline: vHeadline,
+                summaryLine: vSummaryLine,
+                topLevelNames: vTopLevelNames,
+                remainingNames: vRemainingNames,
                 moreNamesLine: moreNamesLine,
-                hasHiddenControls: hasHiddenControls ?? false,
-                verificationWords: verificationWords ?? [],
-                joinedWordsLtr: joinedWordsLtr ?? ""
+                hasHiddenControls: vHasHiddenControls,
+                verificationWords: vWords,
+                joinedWordsLtr: vJoined
             )
         case "progress":
-            return .progress(
-                doneBytes: doneBytes ?? 0,
-                totalBytes: totalBytes ?? 0,
-                percentValue: percentValue ?? 0,
-                percentText: percentText ?? "0%",
-                doneBytesText: doneBytesText ?? "",
-                totalBytesText: totalBytesText ?? "",
-                fractionText: fractionText ?? "",
-                menuBarLabel: menuBarLabel ?? ""
+            let vDoneBytes: UInt64 = doneBytes ?? 0
+            let vTotalBytes: UInt64 = totalBytes ?? 0
+            let vPercentValue: Int = percentValue ?? 0
+            let vPercentText: String = percentText ?? "0%"
+            let vDoneBytesText: String = doneBytesText ?? ""
+            let vTotalBytesText: String = totalBytesText ?? ""
+            let vFractionText: String = fractionText ?? ""
+            let vMenuBarLabel: String = menuBarLabel ?? ""
+            return RustSessionEvent.progress(
+                doneBytes: vDoneBytes,
+                totalBytes: vTotalBytes,
+                percentValue: vPercentValue,
+                percentText: vPercentText,
+                doneBytesText: vDoneBytesText,
+                totalBytesText: vTotalBytesText,
+                fractionText: vFractionText,
+                menuBarLabel: vMenuBarLabel
             )
         case "done":
-            return .done(
-                filesOk: filesOk ?? 0,
-                filesFailed: filesFailed ?? 0,
-                bytes: bytes ?? 0,
-                formattedBytes: formattedBytes ?? "",
-                isText: isText ?? false,
+            let vFilesOk: Int = filesOk ?? 0
+            let vFilesFailed: Int = filesFailed ?? 0
+            let vBytes: UInt64 = bytes ?? 0
+            let vFormattedBytes: String = formattedBytes ?? ""
+            let vIsText: Bool = isText ?? false
+            let vPlaced: [String] = placed ?? []
+            let vTextShortened: Bool = textShortened ?? false
+            let vTextHadHiddenControls: Bool = textHadHiddenControls ?? false
+            return RustSessionEvent.done(
+                filesOk: vFilesOk,
+                filesFailed: vFilesFailed,
+                bytes: vBytes,
+                formattedBytes: vFormattedBytes,
+                isText: vIsText,
                 savedTo: savedTo,
-                placed: placed ?? [],
+                placed: vPlaced,
                 receivedText: receivedText,
                 sanitizedText: sanitizedText,
-                textShortened: textShortened ?? false,
-                textHadHiddenControls: textHadHiddenControls ?? false
+                textShortened: vTextShortened,
+                textHadHiddenControls: vTextHadHiddenControls
             )
         case "declined":
-            return .declined(isText: isText ?? false, headline: headline ?? "")
+            let vIsText: Bool = isText ?? false
+            let vHeadline: String = headline ?? ""
+            return RustSessionEvent.declined(isText: vIsText, headline: vHeadline)
         case "failed":
-            return .failed(
-                headlineKey: headlineKey ?? "errorOther",
-                headline: headline ?? "Transfer failed",
+            let vHeadlineKey: String = headlineKey ?? "errorOther"
+            let vHeadline: String = headline ?? "Transfer failed"
+            let vTechnicalDetail: String = technicalDetail ?? ""
+            return RustSessionEvent.failed(
+                headlineKey: vHeadlineKey,
+                headline: vHeadline,
                 cause: cause,
-                technicalDetail: technicalDetail ?? ""
+                technicalDetail: vTechnicalDetail
             )
         default:
             return nil

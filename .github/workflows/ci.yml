@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, ubuntu-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest, ubuntu-24.04-arm]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -75,7 +75,7 @@ jobs:
           python3 tools/verify-subplatforms.py
 
   macos-dual-arch:
-    name: macOS Dual-Arch FFI, Swift 6 & Bundle (macos-15)
+    name: macOS Rust Tests, Dual-Arch FFI, Swift 6 & Bundle (macos-15)
     runs-on: macos-15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -85,6 +85,12 @@ jobs:
         run: |
           rustup show active-toolchain || rustup toolchain install
           rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - name: Clippy & Workspace Tests on macOS 15
+        env:
+          TOTALDROP_REQUIRE_IPV6: "1"
+        run: |
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+          cargo test --workspace --locked
       - name: Build Rust C ABI FFI staticlib (Apple Silicon arm64)
         run: cargo build --release --locked -p totaldrop-macos-ffi --target aarch64-apple-darwin
       - name: Build Rust C ABI FFI staticlib (Intel x86_64)
