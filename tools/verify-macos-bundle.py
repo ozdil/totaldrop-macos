@@ -152,10 +152,7 @@ def verify_bundle(
                 raise ValueError(f"expected Mach-O arch {expected_arch!r}, got {lipo_out!r}")
 
         otool_out = subprocess.check_output(["otool", "-L", str(exe_path)], text=True)
-        for line in otool_out.splitlines()[1:]:
-            dep = line.strip().split(" ", 1)[0]
-            if not dep:
-                continue
+        for dep in parse_otool_dependencies(otool_out):
             allowed = (
                 dep.startswith("/System/Library/")
                 or dep.startswith("/usr/lib/")
@@ -169,6 +166,19 @@ def verify_bundle(
             ["codesign", "--verify", "--deep", "--strict", "--verbose=2", str(app_bundle)],
             check=True,
         )
+
+
+def parse_otool_dependencies(otool_output: str) -> list[str]:
+    """Extract dylib paths from single-arch or universal (fat) `otool -L` output."""
+    deps: list[str] = []
+    for raw_line in otool_output.splitlines():
+        if not raw_line or not raw_line[0].isspace():
+            # Header lines like `<path>:` or `<path> (architecture x86_64):` are unindented.
+            continue
+        dep = raw_line.strip().split(" ", 1)[0]
+        if dep:
+            deps.append(dep)
+    return deps
 
 
 def verify_dmg(dmg_path: Path, sums_path: Path | None) -> None:
@@ -239,6 +249,21 @@ def run_self_test() -> None:
             pass
         else:
             raise AssertionError("expected non-numeric CFBundleVersion to fail")
+
+        # Regression test: multi-architecture (fat) `otool -L` output contains unindented slice headers.
+        fat_otool = (
+            "dist/universal/TotalDrop.app/Contents/MacOS/TotalDropMac (architecture arm64):\n"
+            "\t/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0)\n"
+            "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0)\n"
+            "dist/universal/TotalDrop.app/Contents/MacOS/TotalDropMac (architecture x86_64):\n"
+            "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0)\n"
+        )
+        parsed = parse_otool_dependencies(fat_otool)
+        assert parsed == [
+            "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+            "/usr/lib/libSystem.B.dylib",
+            "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+        ], f"unexpected parsed otool deps: {parsed!r}"
 
 
 def main() -> int:
