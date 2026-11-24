@@ -30,10 +30,17 @@ cargo build \
 echo "==> [x86_64] Building Swift 6 macOS UI and Finder Share Extension (${SWIFT_ARCH})"
 swift build \
   --package-path "${ROOT_DIR}/ui-swiftui-macos" \
+  --product TotalDropMac \
   --arch "${SWIFT_ARCH}" \
   --configuration release \
   -Xlinker "-L${ROOT_DIR}/target/${RUST_TARGET}/release" \
   -Xlinker "-ltotaldrop_macos_ffi"
+
+swift build \
+  --package-path "${ROOT_DIR}/ui-swiftui-macos" \
+  --product FinderShareExtension \
+  --arch "${SWIFT_ARCH}" \
+  --configuration release
 
 BIN_DIR="$(swift build \
   --package-path "${ROOT_DIR}/ui-swiftui-macos" \

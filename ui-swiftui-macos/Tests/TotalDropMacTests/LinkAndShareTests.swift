@@ -172,7 +172,8 @@ struct LinkAndShareTests {
         #expect(info.appVersion == "0.3.0-beta.6")
         #expect(info.coreVersion == "0.2.0-beta.5")
         #expect(info.bundleVersion == "6")
-        #expect(info.bundleVersion.allSatisfy(\.isNumber))
+        let isNumericBuild = info.bundleVersion.allSatisfy(\.isNumber)
+        #expect(isNumericBuild)
     }
 
     @Test("Live Rust FFI negotiates 35-language bundles including Arabic RTL")

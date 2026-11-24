@@ -77,6 +77,8 @@ jobs:
   macos-dual-arch:
     name: macOS Rust Tests, Dual-Arch FFI, Swift 6 & Bundle (macos-15)
     runs-on: macos-15
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "15.0"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
